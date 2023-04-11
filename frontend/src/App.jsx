@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 
 export function App() {
   const [requestInfo, setRequestInfo] = useState(null);
-  console.log('Sanity Check')
   useEffect(() => {
     const longPollingRequest = async () => {
+      console.log('invoking longPollingRequest')
       try {
-        const response = await fetch('/long-polling');
+        const response = await fetch('http://localhost:3000/long-polling');
         if (!response.ok) {
           throw new Error('Long polling request failed');
         }
+        console.log('Response retrieved ', response)
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
           throw new TypeError('Response is not JSON');
@@ -26,6 +27,7 @@ export function App() {
 
   const handleSendRequest = async () => {
     try {
+      console.log('RequestInfo is', requestInfo)
       if (requestInfo) {
         // Create and fire the API request using the information received from the server
         const response = await fetch(requestInfo.url, {
@@ -35,15 +37,17 @@ export function App() {
           mode: 'cors', // enable CORS
           credentials: 'include' // include cookies in the request
         });
+        console.log('What is our response? ', response)
         if (response.ok) {
-          const data = await response.json();
-          console.log(data);
+          const data = await response.text();
+          console.log('User IP Address', window.location.hostname);
+          console.log('Data is ', data);
         } else {
           throw new Error('API request failed');
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log('Error in handleSendRequest, ',error);
     }
   };
 

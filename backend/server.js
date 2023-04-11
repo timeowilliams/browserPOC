@@ -1,26 +1,40 @@
-const express = require('express');
+import express from 'express';
+import fetch from 'node-fetch';
+import cors from 'cors';
 const app = express();
 const port = 3000;
 
-// Set up a route for the long polling request
-app.get('/long-polling', (req, res) => {
-  // We'll simulate a long request processing time of 5 seconds
-  setTimeout(() => {
-    // Send back the necessary request information to the client
-    res.json({
-      method: 'POST',
-      url: 'https://example.com/api/endpoint',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer <your-access-token>'
-      },
-      body: {
-        // request payload
-      }
-    });
-  }, 5000);
+app.use(cors());
+
+
+app.get('/', (req,res) => {
+  const ipAddress = req.socket.remoteAddress;
+  res.send('IP Address: ',ipAddress);
+})
+
+app.get('/api/posts', async (req, res) => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+  const data = await response.json();
+  res.setHeader('Content-Type', 'application/json');
+  res.send(data);
+});
+
+app.get('/long-polling', async (req, res) => {
+  console.log('Request Incoming :', req.baseUrl);
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const data = await response.json();
+    res.setHeader('Content-Type', 'application/json');
+    // Send back the fetched data as the response
+    // console.log("data fetched", data)
+    console.log('Sending data')
+     return res.status(200).send(data);
+  } catch (error) {
+    console.log('Unexpected Error', error);
+    res.status(500).send('Unexpected Error');
+  }
 });
 
 app.listen(port, () => {
-  console.log(`Long polling server listening at http://localhost:${port}`);
+  console.log(`Express server listening at http://localhost:${port}`);
 });

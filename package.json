@@ -1,0 +1,19 @@
+{
+  "name": "browserPOC",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "start": "concurrently \"cd frontend && yarn dev\" \"cd backend && yarn start\""
+  },
+  "repository": "https://github.com/timeowilliams/browserPOC.git",
+  "author": "Timeo Williams <timwillie73@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  }
+}
