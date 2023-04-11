@@ -22,13 +22,15 @@ app.get('/api/posts', async (req, res) => {
 app.get('/long-polling', async (req, res) => {
   console.log('Request Incoming :', req.baseUrl);
   try {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-    const data = await response.json();
-    res.setHeader('Content-Type', 'application/json');
-    // Send back the fetched data as the response
-    // console.log("data fetched", data)
-    console.log('Sending data')
-     return res.status(200).send(data);
+    const requestInfo = {
+      method: 'GET',
+      url: 'https://jsonplaceholder.typicode.com/posts',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+    res.status(200).json(requestInfo);
+    console.log('Sending request info');
   } catch (error) {
     console.log('Unexpected Error', error);
     res.status(500).send('Unexpected Error');

@@ -36,13 +36,12 @@ export function App() {
   const handleSendRequest = async () => {
     try {
       console.log('RequestInfo is', requestInfo)
-      const cleanedURL = cleanUrl(requestInfo?.url)
+      console.log('what are we fetching too? , requestInfo.url', requestInfo.url)
       if (requestInfo) {
         // Create and fire the API request using the information received from the server
-        const response = await fetch(cleanedURL, {
+        const response = await fetch(requestInfo.url, {
           method: requestInfo.method,
           headers: requestInfo.headers,
-          body: JSON.stringify(requestInfo.body),
           mode: 'cors', // enable CORS
           credentials: 'include' // include cookies in the request
         });
