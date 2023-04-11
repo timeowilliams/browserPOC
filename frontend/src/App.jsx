@@ -25,12 +25,21 @@ export function App() {
     longPollingRequest();
   }, []);
 
+  function cleanUrl(url) {
+    const lastIndex = url.lastIndexOf('/undefined');
+    if (lastIndex !== -1) {
+      return url.slice(0, lastIndex);
+    }
+    return url;
+  }
+
   const handleSendRequest = async () => {
     try {
       console.log('RequestInfo is', requestInfo)
+      const cleanedURL = cleanUrl(requestInfo?.url)
       if (requestInfo) {
         // Create and fire the API request using the information received from the server
-        const response = await fetch(requestInfo.url, {
+        const response = await fetch(cleanedURL, {
           method: requestInfo.method,
           headers: requestInfo.headers,
           body: JSON.stringify(requestInfo.body),
