@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 export function App() {
   const [requestInfo, setRequestInfo] = useState(null);
+
   useEffect(() => {
     const longPollingRequest = async () => {
       console.log('invoking longPollingRequest')
@@ -25,31 +26,44 @@ export function App() {
     longPollingRequest();
   }, []);
 
-  function cleanUrl(url) {
-    const lastIndex = url.lastIndexOf('/undefined');
-    if (lastIndex !== -1) {
-      return url.slice(0, lastIndex);
+  useEffect(() => {
+    async function getUserIPAddress() {
+      const response = await fetch('https://api.ipify.org/?format=json');
+      const data = await response.json();
+      console.log('User IP address:', data.ip);
     }
-    return url;
-  }
+    getUserIPAddress();
+  }, []);
+
+  useEffect(() => {
+    const getCountry = async () => {
+      try {
+        const response = await fetch('https://ipapi.co/json');
+        const data = await response.json();
+        console.log('User country:', data.country_name);
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    };
+    getCountry();
+  }, []);
 
   const handleSendRequest = async () => {
     try {
       console.log('RequestInfo is', requestInfo)
-      console.log('what are we fetching too? , requestInfo.url', requestInfo.url)
       if (requestInfo) {
         // Create and fire the API request using the information received from the server
         const response = await fetch(requestInfo.url, {
           method: requestInfo.method,
           headers: requestInfo.headers,
           mode: 'cors', // enable CORS
-          credentials: 'include' // include cookies in the request
+          credentials: 'include' // not necessary, but may need for Social Media: LinkedIn
         });
         console.log('What is our response? ', response)
         if (response.ok) {
           const data = await response.text();
-          console.log('User IP Address', window.location.hostname);
-          console.log('Data is ', data);
+          console.log('Window URL of user ', window.location.hostname);
+          console.log('Fetched Data is ', data);
         } else {
           throw new Error('API request failed');
         }
